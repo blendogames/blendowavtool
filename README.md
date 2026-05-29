@@ -4,7 +4,7 @@
 ## About
 Blendo Wav Tool is a tool for managing/browsing audio assets. This is intended for work that involves sorting through a large amount of audio files, such as a video game project.
 
-A version of this tool was used during the development of the game [Skin Deep](https://blendogames.com/skindeep).
+A version of this tool was used to develop the game [Skin Deep](https://blendogames.com/skindeep).
 
 ![](screenshot1.png)
 
