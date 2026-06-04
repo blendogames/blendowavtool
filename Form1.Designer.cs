@@ -73,6 +73,9 @@
             label_totalrows = new Label();
             label_selectedrows = new Label();
             button1 = new Button();
+            previewVolumeSlider = new NAudio.Gui.VolumeSlider();
+            volumeLabel = new Label();
+            previewSoundsCheckbox = new CheckBox();
             menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
@@ -468,11 +471,45 @@
             button1.UseVisualStyleBackColor = true;
             button1.Click += button1_Click;
             // 
+            // previewVolumeSlider
+            // 
+            previewVolumeSlider.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            previewVolumeSlider.Location = new Point(1173, 642);
+            previewVolumeSlider.Name = "previewVolumeSlider";
+            previewVolumeSlider.Size = new Size(96, 16);
+            previewVolumeSlider.TabIndex = 10;
+            previewVolumeSlider.Volume = 0.5F;
+            // 
+            // volumeLabel
+            // 
+            volumeLabel.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            volumeLabel.AutoSize = true;
+            volumeLabel.Location = new Point(1117, 641);
+            volumeLabel.Name = "volumeLabel";
+            volumeLabel.Size = new Size(50, 15);
+            volumeLabel.TabIndex = 11;
+            volumeLabel.Text = "Volume:";
+            // 
+            // previewSoundsCheckbox
+            // 
+            previewSoundsCheckbox.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            previewSoundsCheckbox.AutoSize = true;
+            previewSoundsCheckbox.Location = new Point(1003, 640);
+            previewSoundsCheckbox.Name = "previewSoundsCheckbox";
+            previewSoundsCheckbox.Size = new Size(108, 19);
+            previewSoundsCheckbox.TabIndex = 12;
+            previewSoundsCheckbox.Text = "Preview sounds";
+            previewSoundsCheckbox.UseVisualStyleBackColor = true;
+            previewSoundsCheckbox.CheckedChanged += previewSoundsCheckbox_CheckedChanged;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1284, 661);
+            Controls.Add(previewSoundsCheckbox);
+            Controls.Add(volumeLabel);
+            Controls.Add(previewVolumeSlider);
             Controls.Add(button1);
             Controls.Add(label_selectedrows);
             Controls.Add(label_totalrows);
@@ -548,5 +585,8 @@
         private DataGridViewTextBoxColumn Column8;
         private ToolStripMenuItem checkForDuplicateFilesToolStripMenuItem;
         private Button button1;
+        private NAudio.Gui.VolumeSlider previewVolumeSlider;
+        private Label volumeLabel;
+        private CheckBox previewSoundsCheckbox;
     }
 }
