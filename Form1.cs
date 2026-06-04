@@ -47,6 +47,8 @@ namespace BlendoWavTool2
             textBox_folderfilter.TextChanged += TextBox_folderfilter_TextChanged;
             textBox_filenamefilter.TextChanged += TextBox_filenamefilter_TextChanged;
 
+            textBox_folderpath.KeyDown += TextBox_folderpath_KeyDown;
+
             //This makes datagridview scroll much smoother/faster.
             if (!System.Windows.Forms.SystemInformation.TerminalServerSession)
             {
@@ -69,6 +71,17 @@ namespace BlendoWavTool2
 
             if (!string.IsNullOrWhiteSpace(textBox_folderpath.Text))
             {
+                LoadSoundFolder(textBox_folderpath.Text);
+            }
+        }
+
+        private void TextBox_folderpath_KeyDown(object? sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                e.Handled = true;
+                e.SuppressKeyPress = true;
+
                 LoadSoundFolder(textBox_folderpath.Text);
             }
         }
@@ -123,8 +136,6 @@ namespace BlendoWavTool2
 
         void LoadSoundFolder(string folderpath)
         {
-
-
             backgroundWorker = new BackgroundWorker();
             backgroundWorker.WorkerSupportsCancellation = true;
             backgroundWorker.DoWork += OnLoadSoundsDoWork;
@@ -140,7 +151,14 @@ namespace BlendoWavTool2
             string folderpath = textBox_folderpath.Text;
             DirectoryInfo dir = new DirectoryInfo(folderpath);
             if (!dir.Exists)
+            {
+                e.Cancel = true;
+
+                AddLogInvoked("ERROR: folder not found:");
+                AddLogInvoked(folderpath);
+
                 return;
+            }
 
             if (string.IsNullOrWhiteSpace(Properties.Settings.Default.soundfiletypes))
             {
@@ -225,6 +243,13 @@ namespace BlendoWavTool2
 
         private void OnLoadSoundsCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
+            if (e.Cancelled == true)
+            {
+                dataGridView1.Rows.Clear();
+                dataGridView1.ClearSelection();
+                return;                
+            }
+
             RefreshGrid();
 
             TimeSpan delta = DateTime.Now.Subtract(start);
