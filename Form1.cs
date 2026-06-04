@@ -38,6 +38,9 @@ namespace BlendoWavTool2
 
         BackgroundWorker backgroundWorker;
 
+        private WaveOut previewOutputDevice;
+        private AudioFileReader previewAudioFileReader;
+
         public Form1()
         {
             InitializeComponent();
@@ -48,6 +51,8 @@ namespace BlendoWavTool2
             textBox_filenamefilter.TextChanged += TextBox_filenamefilter_TextChanged;
 
             textBox_folderpath.KeyDown += TextBox_folderpath_KeyDown;
+            // Set up WaveOut to play previews through default audio device.
+            previewOutputDevice = new WaveOut();
 
             //This makes datagridview scroll much smoother/faster.
             if (!System.Windows.Forms.SystemInformation.TerminalServerSession)
@@ -122,6 +127,57 @@ namespace BlendoWavTool2
                                        .Select(c => c.RowIndex).Distinct().Count();
 
             label_selectedrows.Text = string.Format("Selected rows: {0}", selectedCount);
+
+            if (selectedCount == 1 && previewSoundsCheckbox.Checked)
+            {
+                var fullPath = GetSelectedFullpath();
+                if (Path.Exists(fullPath))
+                {
+                    PreviewSelectedSound(GetSelectedFullpath());
+                }
+            }
+        }
+
+        private void PreviewSelectedSound(string soundPath)
+        {
+            // Stop any previously playing sounds.
+            previewOutputDevice?.Stop();
+
+            // Get rid of previously loaded sound, if any.
+            previewAudioFileReader?.Close();
+            previewAudioFileReader?.Dispose();
+
+            try
+            {
+                previewAudioFileReader = new AudioFileReader(soundPath);
+
+                if (previewOutputDevice == null)
+                {
+                    AddLogInvoked($"Can't preview sound {soundPath}, audio device not available.");
+
+                }
+                else
+                {
+                    previewOutputDevice.Init(previewAudioFileReader);
+                    previewOutputDevice.Volume = previewVolumeSlider.Volume;
+                    previewOutputDevice.Play();
+                }
+
+            }
+            catch (Exception e)
+            {
+                AddLogInvoked($"Couldn't preview sound {soundPath}: {e.Message}");
+            }
+
+        }
+        private void previewSoundsCheckbox_CheckedChanged(object sender, EventArgs e)
+        {
+            // Stop any previously playing sounds.
+            previewOutputDevice?.Stop();
+
+            // Get rid of previously loaded sound, if any.
+            previewAudioFileReader?.Close();
+            previewAudioFileReader?.Dispose();
         }
 
         private void TextBox_filenamefilter_TextChanged(object? sender, EventArgs e)
@@ -406,7 +462,7 @@ namespace BlendoWavTool2
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Blendo Wav Tool\nby Brendon Chung\n\nAudio asset helper tool. Used to browse, find, and hear audio assets.\n\n• Double-click to play sound.\n\n• Drag sound files into window to automatically copy/overwrite existing sound files. Will automatically find correct subfolders.",
+            MessageBox.Show("Blendo Wav Tool\nby Brendon Chung\n\nAudio asset helper tool. Used to browse, find, and hear audio assets.\n\nï¿½ Double-click to play sound.\n\nï¿½ Drag sound files into window to automatically copy/overwrite existing sound files. Will automatically find correct subfolders.",
                 "About", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
@@ -869,13 +925,13 @@ namespace BlendoWavTool2
                 if (Directory.Exists(textBox_folderpath.Text))
                 {
                     rootFolder = textBox_folderpath.Text;
-                }                
+                }
             }
 
             using (FolderBrowserDialog folderDialog = new FolderBrowserDialog())
             {
                 folderDialog.Description = "Select folder";
-                
+
                 if (!string.IsNullOrWhiteSpace(rootFolder))
                 {
                     folderDialog.InitialDirectory = rootFolder;
