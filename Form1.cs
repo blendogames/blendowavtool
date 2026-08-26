@@ -546,6 +546,8 @@ namespace BlendoWavTool2
                 return;
             }
 
+            arguments = string.Format($"\"{arguments}\""); //add quotes to handle any spaces in the path
+
             ProcessStartInfo startInfo = new ProcessStartInfo();
             startInfo.FileName = executablePath;
             startInfo.Arguments = arguments;
